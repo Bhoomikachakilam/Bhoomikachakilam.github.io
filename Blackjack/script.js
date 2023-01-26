@@ -1,102 +1,53 @@
-/**
- * Function which build pack of Cards as an Array and as an Object
- * @param {*} asArray - which decides whether to return as an Array or as an Object
- * @returns - packArr if asArray is true, else packObj
- */
-function buildCards(asArray=true){
+function buildCards(asArray = true) {
     const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
     const values = ['Ace', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King'];
     const packArr = []
     const packObj = {}
-    for (let suit in suits) {
-         let i=1;
-        for (let value in values) {
-          packArr.push(`${values[value]} of ${suits[suit]}`);
-          packObj[`${values[value]} of ${suits[suit]}`]=i;
-               i++;
-               if(i>10)
-                 i=10;
-         }
-     }
-        
-    if(!asArray)
-    {
+
+
+    for (let k = 0; k < suits.length; k++) {
+        for (let j = 0; j < values.length; j++) {
+            let packarr = values[j] + " of " + suits[0]
+            packArr.push(packarr)
+            packObj[packarr] = j + 1
+        }
+    }
+    if (!asArray) {
         return packObj;
     }
-    return packArr
+    return packArr;
 }
-/**
- * Define Deck class
- */
 class Deck {
     constructor() {
         this.deck = [];
         this.reset(); //Add 52 cards to the deck
         this.shuffle(); //Suffle the deck
-    } //End of constructor
-
-
-    /**
-     * Resetting the Deck
-     * Hint: use buildCards in this method
-     */
-    reset() {
-     this.deck=buildCards(true)
-    } //End of reset()
-
-
-    /**
-     * Shuffling the cards
-     */
-    shuffle() {
-        const { deck } = this;
-    let m = deck.length, i;
-
-    while(m){
-      i = Math.floor(Math.random() * m--);
-
-      [deck[m], deck[i]] = [deck[i], deck[m]];
     }
+    reset() {
+        this.deck = [];
+        this.deck = buildCards(true);
+    }
+    shuffle() {
+        for (let i = this.deck.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            let temp = this.deck[i];
+            this.deck[i] = this.deck[j];
+            this.deck[j] = temp;
+        }
+        return this.deck;
+    }
+    deal() {
+        return this.deck.pop();
 
-    return this;
-  }
-        
-    } //End of shuffle()
-
-    /**
-     * Deal a card
-     * @returns {String} A Card from the deck of cards
-     */
-    deal() ;{
-        return (this.deck.pop());
-
-    } //End of deal()
-
-    /**
-     * Check if the Deck is empty
-     * @returns {Boolean} True or False 
-     */
-    isEmpty() ;{
-
-        return (this.deck.length===0);
-
-    } //End of isEmpty()
-
-    /**
-     * Remaining cards in the Deck
-     * @returns {Number} Number of cards in the Deck
-     */
-    length();{
-       return(this.deck.length);
-
-    } //End of length()
-
- //End of Deck Class
-
-
-/**
- * Define Card Class
- */
+    }
+    isEmpty() {
+        // return (this.deck.length == 0);
+        return 0 == this.deck.length
+    }
+    length() {
+        return this.deck.length;
+    }
+}
 class Card {
     constructor(card) {
         this.card = card;
@@ -143,28 +94,16 @@ class Card {
     } //End of flip()
 
 } //End of Card class
+const deck = new Deck;
+let card1, card2, playerCard1, playerCard2, playerCard3, playerCard4, playerTotal = 0,
+    dealerTotal = 0;
 
-/**
- * Functions which help Play the BlackJack game 
- */
-const deck = new Deck();
-let card1, card2, playerCard1, playerCard2, playerCard3, playerCard4;
 
-let playerTotal = 0;
-let dealerTotal = 0;
-
-/**
- * Dealing initial Cards
- */
 function initialDeal() {
     if (deck.length() < 7) {
         deck.reset();
-        deck.shuffle();
+        deck.shuffle()
     }
-
-    // Deal(Instantiate) 2 Dealer cards and 2 Player cards
-
-    // write your code here
     card1 = new Card(deck.deal());
     card2 = new Card(deck.deal());
     playerCard1 = new Card(deck.deal());
@@ -191,12 +130,6 @@ function initialDeal() {
     }
 }
 
-  
- //End of deal()
-
-/**
- * If the Player stands with his cards - the Dealer has to flip his closed card and determine who wins the game
- */
 function stand() {
     card2.flip();
     dealerTotal = card1.value + card2.value;
@@ -223,17 +156,11 @@ function stand() {
         })
     }
 }
-
-
-
-// Variable to track the extra cards dealed
 let extraCnt = 0;
 
-/**
- * function which deals extra playercards - Max. 2 cards
- */
 function hit() {
-    let dealButton = document.getElementById("deal");playerCard3 = new Card(deck.deal());
+    var dealButton = document.getElementById("deal");
+    playerCard3 = new Card(deck.deal());
     playerCard4 = new Card(deck.deal());
     if (0 === extraCnt) {
         playerCard3.displayCard("playerCard3", true);
@@ -270,8 +197,6 @@ function hit() {
     }).then(() => {
         location.reload()
     });
-    extraCnt++;
+    extraCnt++
 }
- 
-
 initialDeal();
